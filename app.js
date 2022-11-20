@@ -1,5 +1,6 @@
 let input = document.querySelector('input[type="file"]');
-input.addEventListener('change', function(e){
+
+function handleFiles(inputFiles){
 	console.log(input.files)
 	const reader = new FileReader();
 
@@ -21,13 +22,13 @@ input.addEventListener('change', function(e){
 			context.putImageData(imageData, 0, 0)
 			document.body.appendChild(canvas) //black&white
 			//canvas.toDataURL()
-			//canvas.toBlob(function(blob){ //24~30會跳錯
-			//	const form = new FormData()
-			//	form.append('image',blob, 'moody.jpg')
-			//	const xhr = new XMLHttpRequest()
-			//	xhr.open('POST', '/imageupload', true) //send form to server at location imageupload
-			//	xhr.send(form)
-			//})
+			canvas.toBlob(function(blob){ //24~30會跳錯
+			const form = new FormData()
+			form.append('image',blob, 'moody.jpg')
+			const xhr = new XMLHttpRequest()
+			xhr.open('POST', '/imageupload', true) //send form to server at location imageupload
+			xhr.send(form)
+			})
 
 		}
 		img.src= reader.result
@@ -47,10 +48,17 @@ input.addEventListener('change', function(e){
 	reader.readAsDataURL(input.files[0])
 
 
-},false)
+};//end of handleFiles
 
 
-//dragover
-//input.addEventListener('change', function(e){
-//	handleFiles(input.files)
-//}, false)
+//dragover 
+input.addEventListener('change', function(e){
+handleFiles(input.files)
+}, false)
+
+
+input.addEventListener('dragover', function(e){
+	e.preventDefault()
+	e.stopPropagation()
+	handleFiles(e.dataTransfer.files)
+}, false)
